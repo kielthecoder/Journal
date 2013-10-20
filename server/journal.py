@@ -19,7 +19,7 @@ class Post:
 		self._id = record[0]
 		self.title = record[1]
 		self.author_id = record[2]
-		self.posted = record[3]
+		self.posted = datetime.datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
 		self.body = record[4]
 
 class Journal:
