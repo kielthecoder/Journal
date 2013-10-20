@@ -182,8 +182,15 @@ h6 {
 	padding: 1em 0 1em 0.5em;
 }
 
+#content h2 {
+	color: #c30;
+	font: italic 18pt Georgia, serif;
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
 #content p {
-	font: normal 14pt serif;
+	font: normal 14pt Georgia, serif;
 	line-height: 1.4em;
 }
 

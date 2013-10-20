@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block content %}{% for post in posts %}
+{% block content %}
+	<h2>{{ title }}</h2>
+{% for post in posts %}
 	<div class="post">
 		<h3><a href="{{ post.posted.strftime("/posts/%Y/week/%W/") }}">{{ post.posted.strftime("%A") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/%m/") }}">{{ post.posted.strftime("%B %d") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/") }}">{{ post.posted.strftime("%Y") }}</a></h3>
 		<h4><a href="/post/{{ post.slug }}">{{ post.title }}</a></h4>
