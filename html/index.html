@@ -2,9 +2,9 @@
 
 {% block content %}{% for post in posts %}
 	<div class="post">
-		<h3><a href="#">Wednesday</a>, <a href="#">October 9</a>, <a href="#">2013</a></h3>
-		<h4><a href="#">{{ post.title }}</a></h4>
+		<h3><a href="{{ post.posted.strftime("/posts/%Y/week/%W/") }}">{{ post.posted.strftime("%A") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/%m/") }}">{{ post.posted.strftime("%B %d") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/") }}">{{ post.posted.strftime("%Y") }}</a></h3>
+		<h4><a href="/post/{{ post.slug }}">{{ post.title }}</a></h4>
 		{{ post.body|markdown }}
-		<h5>Posted {{ post.posted }} | <a href="#">testing</a></h5>
+		<h5>Posted {{ post.posted.strftime("%I:%M %P") }} | <a href="#">testing</a></h5>
 	</div>
 {% endfor %}{% endblock %}

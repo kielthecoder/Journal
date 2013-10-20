@@ -21,6 +21,7 @@ class Post:
 		self.author_id = record[2]
 		self.posted = datetime.datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
 		self.body = record[4]
+		self.slug = record[5]
 
 class Journal:
 	env = jinja2.Environment(loader=jinja2.FileSystemLoader('html'))
