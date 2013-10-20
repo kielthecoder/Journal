@@ -42,12 +42,13 @@ class Journal:
 		return t.render(posts=posts)
 
 	@cherrypy.expose
-	def test(self):
+	def post(self, slug_text):
 		cur = self._get_cursor()
-		cur.execute('SELECT * FROM posts ORDER BY posted DESC')
-		result = cur.fetchone()
+		cur.execute('SELECT * FROM posts WHERE slug = ? LIMIT 1', slug_text)
+		p = Post(cur.fetchone())
 		cur.close()
-		return str(result)
+		t = self.env.get_template('view_post.html')
+		return t.render(post=p)
 
 if __name__ == '__main__':
 	cherrypy.quickstart(Journal())

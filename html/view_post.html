@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="post">
+		<h3><a href="{{ post.posted.strftime("/posts/%Y/week/%W/") }}">{{ post.posted.strftime("%A") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/%m/") }}">{{ post.posted.strftime("%B %d") }}</a>, <a href="{{ post.posted.strftime("/posts/%Y/") }}">{{ post.posted.strftime("%Y") }}</a></h3>
+		<h4><a href="/post/{{ post.slug }}">{{ post.title }}</a></h4>
+		{{ post.body|markdown }}
+		<h5>Posted {{ post.posted.strftime("%I:%M %P") }} | <a href="#">testing</a></h5>
+	</div>
+{% endblock %}
