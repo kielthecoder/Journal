@@ -1,0 +1,5 @@
+# Environments can change from machine to machine
+env/
+
+# Don't copy databases to the repository
+db/test.db
