@@ -1,1 +1,27 @@
-This is an (nearly) empty repository.
+INITIAL SETUP
+
+Once you've cloned this repository, you'll need to setup a Python 3 environment for the server.  Typically, you can do something like:
+
+	virtualenv env
+
+in your working directory to create the environment.  Activate the environment in your shell with:
+
+	source env/bin/activate
+
+then install the packages necessary for Journal to run:
+
+	pip install cherrypy jinja2 markdown
+
+TESTING
+
+You will need to create a database for the application.  The db/schema.sql script will create a database suitable for testing.  Create it with:
+
+	cd db ; sqlite3 test.db < schema.sql ; cd ..
+
+RUNNING THE SERVER
+
+Start the server with:
+
+	python server/journal.py
+
+By default, your journal is now accessible from 127.0.0.1:8080.  If you've configured Nginx to proxy requests to the server, you can view your journal by accessing the root URL.
