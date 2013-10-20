@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}{% for post in posts %}
+	<div class="post">
+		<h3><a href="#">Wednesday</a>, <a href="#">October 9</a>, <a href="#">2013</a></h3>
+		<h4><a href="#">{{ post.title }}</a></h4>
+		{{ post.body|markdown }}
+		<h5>Posted {{ post.posted }} | <a href="#">testing</a></h5>
+	</div>
+{% endfor %}{% endblock %}

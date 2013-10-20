@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Kiel's Web Journal</title>
+		<link href="/css/style.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="head">
+				<div id="banner">
+					<h1>Kiel's Web Journal</h1>
+				</div>
+				<div id="nav">
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li><a href="/archive/">Archive</a></li>
+						<li><a href="mailto:kiel.lofstrand@gmail.com">Contact</a></li>
+					</ul>
+					<div id="search">
+						<form method="GET" action="/">
+							<input type="text" name="q" placeholder="Search" />
+						</form>
+					</div>
+					<div class="fixup"></div>
+				</div>
+			</div>
+			<div id="body">
+				<div class="left">
+					<div id="info">
+						<img src="/img/me.png" alt="me" />
+
+						<p class="section">About Me</p>
+						<p>Hi, my name's Kiel.  I'm a Dad!  I'm also a programmer.  In my spare time, I try to write my thoughts here.</p>
+
+						<p class="section">Penguins &amp; Pythons</p>
+						<p>This site is powered by <a href="https://www.kernel.org/category/about.html">Linux</a> and <a href="http://www.python.org/">Python</a>.  <a href="http://www.cherrypy.org/">CherryPy</a> is used for the web server, and <a href="http://wiki.nginx.org/Main">Nginx</a> is used as an HTTP proxy to that server.  Quick and painless for everyday web development!</p>
+					</div>
+				</div>
+				<div class="right">
+					<div id="content">
+{% block content %}{% endblock %}
+					</div>
+				</div>
+				<div class="fixup"></div>
+			</div>
+			<div id="foot">
+				<h6>Copyright &copy; 2013 Kiel Lofstrand</h6>
+			</div>
+		</div>
+	</body>
+</html>
