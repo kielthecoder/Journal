@@ -33,7 +33,7 @@ class Journal:
 	@cherrypy.expose
 	def index(self):
 		cur = self._get_cursor()
-		cur.execute('SELECT * FROM posts ORDER BY posted DESC')
+		cur.execute('SELECT * FROM posts ORDER BY posted DESC LIMIT 10')
 		posts = []
 		for row in cur.fetchall():
 			posts.append(Post(row))
@@ -59,6 +59,9 @@ class Journal:
 			if args[1] == 'week':
 				return self._posts_from_year_and_week(*args)
 
+			if len(args) == 2:
+				return self._posts_from_year_and_month(*args)
+
 		# Posts within the entire year
 		cur = self._get_cursor()
 		cur.execute('SELECT * FROM posts WHERE STRFTIME("%Y",posted) = ? ORDER BY posted', (args[0],))
@@ -78,11 +81,11 @@ class Journal:
 
 	def _posts_from_year_and_week(self, *args):
 		year = args[0]
-		month = args[2]
+		week = args[2]
 
 		# Posts within year and same week
 		cur = self._get_cursor()
-		cur.execute('SELECT * FROM posts WHERE STRFTIME("%Y",posted) = ? AND STRFTIME("%W",posted) = ? ORDER BY posted', (year, month))
+		cur.execute('SELECT * FROM posts WHERE STRFTIME("%Y",posted) = ? AND STRFTIME("%W",posted) = ? ORDER BY posted', (year,week))
 		posts = []
 		for row in cur.fetchall():
 			posts.append(Post(row))
@@ -98,6 +101,29 @@ class Journal:
 			count = "%d posts" % (len(posts),)
 
 		return t.render(title="%s between %s and %s" % (count, d1.strftime("%x"), d2.strftime("%x")), posts=posts)
+
+	def _posts_from_year_and_month(self, *args):
+		year = args[0]
+		month = args[1]
+
+		# Posts within year and same month
+		cur = self._get_cursor()
+		cur.execute('SELECT * FROM posts WHERE STRFTIME("%Y",posted) = ? AND STRFTIME("%m",posted) = ? ORDER BY posted', (year,month))
+		posts = []
+		for row in cur.fetchall():
+			posts.append(Post(row))
+		cur.close()
+
+		t = self.env.get_template('index.html')
+		dt = posts[0].posted
+
+		if len(posts) == 1:
+			count = "1 post"
+		else:
+			count = "%d posts" % (len(posts),)
+
+		return t.render(title="%s in %s" % (count,dt.strftime("%B, %Y")), posts=posts)
+
 
 if __name__ == '__main__':
 	cherrypy.quickstart(Journal())
