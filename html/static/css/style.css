@@ -203,7 +203,17 @@ h6 {
 }
 
 #content ul {
+	font: normal 12pt Georgia, serif;
 	margin-left: 1em;
+}
+
+#content ul a {
+	color: #c30;
+	text-decoration: none;
+}
+
+#content ul a:hover {
+	text-decoration: underline;
 }
 
 #foot {
