@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h2>Archive</h2>
+	<ul>
+{% for year in cal %}
+		<li><a href="/posts/{{ year.year }}/">{{ year.year }}</a></li>
+		<ul>
+	{% for month in year.months %}
+			<li><a href="/posts/{{ year.year }}/{{ month.month }}/">{{ month.month|monthname }}</a></li>
+			<ul>
+		{% for post in month.posts %}
+				<li><a href="/post/{{ post.slug }}">{{ post.title }}</a></li>
+		{% endfor %}
+			</ul>
+	{% endfor %}
+		</ul>
+{% endfor %}
+	</ul>
+{% endblock %}
