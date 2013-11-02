@@ -35,6 +35,23 @@ def filter_monthname(month):
 
 	return names[month]
 
+class Processor:
+	def __init__(self, parent):
+		self.parent = parent
+
+	def _new_post(self, *args, **kwargs):
+		return "TODO: new_post"
+
+	@cherrypy.expose
+	def default(self, *args, **kwargs):
+		try:
+			if kwargs['action'] == 'new_post':
+				return self._new_post(args, kwargs)
+		except KeyError:
+			raise cherrypy.HTTPError(400)
+
+		return "TODO: default action?"
+
 class Journal:
 	env = jinja2.Environment(loader=jinja2.FileSystemLoader('html'))
 	env.filters['markdown'] = filter_markdown
@@ -42,6 +59,7 @@ class Journal:
 
 	def __init__(self):
 		self.posts = PostsView(self)
+		self.process = Processor(self)
 
 	def _get_cursor(self):
 		return cherrypy.thread_data.db.cursor()
