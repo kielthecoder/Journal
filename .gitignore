@@ -1,5 +1,6 @@
 # Environments can change from machine to machine
 env/
+*/__pycache__
 
 # Don't copy databases to the repository
 db/test.db
