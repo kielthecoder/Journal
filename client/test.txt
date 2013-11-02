@@ -1,6 +1,5 @@
-Title: My Test Post
-Author: kiel
-Tags: development
+$TITLE My Test Post
+$TAGS programming development
 
 This is the body text of the post.  It consists of a stream of characters
 that ultimately terminate in a single line with END written out.
@@ -10,5 +9,5 @@ by the Markdown library, so you can write out posts that way.
 
 And this is the point where we come to an end.
 
-END
+$END
 
