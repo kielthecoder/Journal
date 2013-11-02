@@ -1,8 +1,6 @@
 import cherrypy
 
 class PostsView:
-	exposed = True
-
 	def __init__(self, parent):
 		self.parent = parent
 
