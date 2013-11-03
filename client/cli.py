@@ -1,3 +1,4 @@
+import json
 import sys
 
 def new_post_from_file(filename):
@@ -16,22 +17,27 @@ def new_post_from_file(filename):
 				mode = 'title'
 				line = line[6:]
 				title = line.strip()
-				print("title = %r" % title)
+				#print("title = %r" % title)
 			elif line[0:5] == '$TAGS':
 				mode = 'tags'
 				line = line[5:]
 				for tag in line.split():
 					tags.append(tag)
-				print("tags = %r" % tags)
+				#print("tags = %r" % tags)
 			else:
 				mode = 'body'
 				body += line
 
 			if mode == 'end':
 				break
-	print("body = %r" % body)
 
-	print("Created new post from %s" % filename)
+	print(json.dumps({
+			'action': 'new_post',
+			'title': title,
+			'body': body,
+		}))
+
+	print(">>> Created new post from %s" % filename)
 
 if __name__ == '__main__':
 	try:
@@ -40,7 +46,7 @@ if __name__ == '__main__':
 				print("Usage: %s new <filename>" % sys.argv[0])
 			else:
 				new_post_from_file(sys.argv[2])
-	except:
+	except KeyError:
 		print("Too few arguments")
 		print("Usage: %s <command> [args]" % sys.argv[0])
 		print("Valid commands are:")

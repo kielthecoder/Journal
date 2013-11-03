@@ -3,16 +3,20 @@ import datetime
 import markdown
 import sqlite3
 import jinja2
+import json
 
 from models import Post
 from views import PostsView
+
+# Database callbacks
 
 def connect(thread_id):
 	# Store a connection to our database in each thread
 	cherrypy.thread_data.db = sqlite3.connect('db/test.db')
 
-# Tell CherryPy to call connect for each thread
 cherrypy.engine.subscribe('start_thread', connect)
+
+# Jinja2 filter callbacks
 
 def filter_markdown(text):
 	return markdown.markdown(text)
@@ -35,22 +39,36 @@ def filter_monthname(month):
 
 	return names[month]
 
-class Processor:
+# Function decorators
+
+def jsonify(func):
+	def wrapper(*args, **kwargs):
+		res = func(args, kwargs)
+		cherrypy.response.headers['Content-Type'] = 'application/json'
+		return json.dumps(res)
+	
+	return wrapper
+
+class APIv1:
 	def __init__(self, parent):
 		self.parent = parent
 
 	def _new_post(self, *args, **kwargs):
-		return "TODO: new_post"
+		html = "<html><body>"
+		html += "<title>" + kwargs['title'] + "</title>"
+		html += "<tags>" + kwargs['tags'] + "</tags>"
+		html += "<body>" + kwargs['body'] + "</body>"
+		html += "</body></html>"
+		return html
 
 	@cherrypy.expose
+	@jsonify
 	def default(self, *args, **kwargs):
-		try:
-			if kwargs['action'] == 'new_post':
-				return self._new_post(args, kwargs)
-		except KeyError:
-			raise cherrypy.HTTPError(400)
+		return json.dumps({ 'error': 'TODO' })
 
-		return "TODO: default action?"
+class API:
+	def __init__(self, parent):
+		self.v1 = APIv1(parent)
 
 class Journal:
 	env = jinja2.Environment(loader=jinja2.FileSystemLoader('html'))
@@ -59,7 +77,7 @@ class Journal:
 
 	def __init__(self):
 		self.posts = PostsView(self)
-		self.process = Processor(self)
+		self.api = API(self)
 
 	def _get_cursor(self):
 		return cherrypy.thread_data.db.cursor()
