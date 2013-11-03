@@ -1,10 +1,9 @@
-import cherrypy
-import datetime
-import markdown
 import sqlite3
-import jinja2
 import json
 
+from cherrypy import engine, expose, quickstart, response, thread_data
+from markdown import markdown
+from jinja2 import Environment, FileSystemLoader
 from models import Post
 from views import PostsView
 
@@ -12,14 +11,14 @@ from views import PostsView
 
 def connect(thread_id):
 	# Store a connection to our database in each thread
-	cherrypy.thread_data.db = sqlite3.connect('db/test.db')
+	thread_data.db = sqlite3.connect('db/test.db')
 
-cherrypy.engine.subscribe('start_thread', connect)
+engine.subscribe('start_thread', connect)
 
 # Jinja2 filter callbacks
 
 def filter_markdown(text):
-	return markdown.markdown(text)
+	return markdown(text)
 
 def filter_monthname(month):
 	names = [
@@ -43,11 +42,12 @@ def filter_monthname(month):
 
 def jsonify(func):
 	def wrapper(*args, **kwargs):
-		res = func(args, kwargs)
-		cherrypy.response.headers['Content-Type'] = 'application/json'
-		return json.dumps(res)
-	
+		res = func(*args, **kwargs)
+		response.headers['Content-Type'] = "application/json"
+		return bytes(json.dumps(res), encoding='utf-8')
 	return wrapper
+
+# Client API
 
 class APIv1:
 	def __init__(self, parent):
@@ -61,17 +61,19 @@ class APIv1:
 		html += "</body></html>"
 		return html
 
-	@cherrypy.expose
+	@expose
 	@jsonify
 	def default(self, *args, **kwargs):
-		return json.dumps({ 'error': 'TODO' })
+		return { 'status': 'TODO' }
 
 class API:
 	def __init__(self, parent):
 		self.v1 = APIv1(parent)
 
+# Server
+
 class Journal:
-	env = jinja2.Environment(loader=jinja2.FileSystemLoader('html'))
+	env = Environment(loader=FileSystemLoader('html'))
 	env.filters['markdown'] = filter_markdown
 	env.filters['monthname'] = filter_monthname
 
@@ -80,7 +82,7 @@ class Journal:
 		self.api = API(self)
 
 	def _get_cursor(self):
-		return cherrypy.thread_data.db.cursor()
+		return thread_data.db.cursor()
 
 	def _get_posts(self, *args):
 		cur = self._get_cursor()
@@ -91,13 +93,13 @@ class Journal:
 		cur.close()
 		return posts
 
-	@cherrypy.expose
+	@expose
 	def index(self):
 		posts = self._get_posts('SELECT * FROM posts ORDER BY posted DESC LIMIT 5')
 		t = self.env.get_template('index.html')
 		return t.render(title="Recent Posts",posts=posts)
 
-	@cherrypy.expose
+	@expose
 	def post(self, slug_text):
 		cur = self._get_cursor()
 		cur.execute('SELECT * FROM posts WHERE slug = ? LIMIT 1', (slug_text,))
@@ -107,4 +109,4 @@ class Journal:
 		return t.render(post=p)
 
 if __name__ == '__main__':
-	cherrypy.quickstart(Journal())
+	quickstart(Journal())
