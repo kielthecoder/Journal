@@ -1,53 +1,101 @@
+import requests
+import pprint
 import json
 import sys
 
-def new_post_from_file(filename):
-	mode = 'body'
+class Server:
+	def __init__(self, parent):
+		self.parent = parent
+		self.host = None
 
-	title = ""
-	author = ""
-	tags = list()
-	body = ""
+	def __call__(self, fulltext, words):
+		name = 'do_' + words[0].lower()
+		try:
+			method = getattr(self, name)
+			method(fulltext, words[1:])
+		except AttributeError:
+			print('Command not found')
 
-	with open(filename, "rt") as fd:
-		for line in fd:
-			if line[0:4] == '$END':
-				mode = 'end'
-			elif line[0:6] == '$TITLE':
-				mode = 'title'
-				line = line[6:]
-				title = line.strip()
-				#print("title = %r" % title)
-			elif line[0:5] == '$TAGS':
-				mode = 'tags'
-				line = line[5:]
-				for tag in line.split():
-					tags.append(tag)
-				#print("tags = %r" % tags)
+	def do_open(self, fulltext, words):
+		"""Connect to a sever"""
+		try:
+			self.host = words[0]
+		except:
+			print("Usage: server open <address:port>")
+
+	def do_close(self, fulltext, words):
+		"""Close connection to server"""
+		self.host = None
+
+class Echo:
+	def __init__(self, parent):
+		self.parent = parent
+		self.host = self.parent.server.host
+
+	def __call__(self, fulltext, words):
+		if self.host:
+			req = requests.get(self.host + '/api/v1/echo?text=' + words[0])
+		else:
+			print("Must be connected to server first (use server open)")
+
+class REPL:
+	def __init__(self):
+		self.running = False
+		self.server = Server(self)
+		self.echo = Echo(self)
+
+	def run(self):
+		self.running = True
+		print('Type "help" for a list of available commands.')
+		while self.running:
+			try:
+				text = input('>>> ')
+			except EOFError:
+				print()
+				text = 'quit'
+			words = text.split()
+			cmd = words[0].lower()
+			if cmd == 'help':
+				self.do_help()
+			elif cmd == 'server':
+				self.server(text, words[1:])
+			elif cmd == 'echo':
+				self.echo(text, words[1:])
 			else:
-				mode = 'body'
-				body += line
+				name = 'do_' + cmd
+				try:
+					method = getattr(self, name)
+					method(text, words[1:])
+				except AttributeError:
+					print('Command not found')
+		print('Goodbye!')
 
-			if mode == 'end':
-				break
+	def do_help(self):
+		"""List commands available from the REPL"""
+		methods = dir(self)
+		commands = []
+		for m in methods:
+			if m.startswith('do_'):
+				commands.append([m[3:], getattr(self, m).__doc__])
+		systems = ['server']
+		for s in systems:
+			if hasattr(self, s):
+				methods = dir(self.server)
+				for m in methods:
+					if m.startswith('do_'):
+						commands.append([s + ' ' + m[3:], getattr(self.server, m).__doc__])
+		margin = 20
+		for cmd in commands:
+			pad = len(cmd[0]) + 4
+			if pad > margin:
+				margin = pad
+		for cmd in commands:
+			print("%s- %s" % (cmd[0].ljust(margin), cmd[1]))
 
-	print(json.dumps({
-			'action': 'new_post',
-			'title': title,
-			'body': body,
-		}))
-
-	print(">>> Created new post from %s" % filename)
+	def do_quit(self, fulltext, words):
+		"""Stop the REPL"""
+		self.running = False
 
 if __name__ == '__main__':
-	try:
-		if sys.argv[1] == 'new':
-			if len(sys.argv) < 3:
-				print("Usage: %s new <filename>" % sys.argv[0])
-			else:
-				new_post_from_file(sys.argv[2])
-	except KeyError:
-		print("Too few arguments")
-		print("Usage: %s <command> [args]" % sys.argv[0])
-		print("Valid commands are:")
-		print("\tnew\t- create a new post")
+	app = REPL()
+	app.run()

@@ -3,6 +3,7 @@ import cherrypy
 class PostsView:
 	def __init__(self, parent):
 		self.parent = parent
+		self.base = parent.base
 
 	def _calendar(self):
 		posts = self.parent._get_posts('SELECT * FROM posts ORDER BY posted')
@@ -38,7 +39,7 @@ class PostsView:
 				cal.append(year)
 
 		t = self.parent.env.get_template('calendar.html')
-		return t.render(cal=cal)
+		return t.render(base=self.base, cal=cal)
 
 	def _posts_from_year(self, *args):
 		year = args[0]
@@ -53,7 +54,7 @@ class PostsView:
 		else:
 			count = "%d posts" % (len(posts),)
 
-		return t.render(title="%s in %s" % (count, year), posts=posts)
+		return t.render(base=self.base, title="%s in %s" % (count, year), posts=posts)
 
 	def _posts_from_year_and_week(self, *args):
 		year = args[0]
@@ -76,7 +77,7 @@ class PostsView:
 		else:
 			title = count
 
-		return t.render(title=title, posts=posts)
+		return t.render(base=self.base, title=title, posts=posts)
 
 	def _posts_from_year_and_month(self, *args):
 		year = args[0]
@@ -98,7 +99,7 @@ class PostsView:
 		else:
 			title = count
 
-		return t.render(title=title, posts=posts)
+		return t.render(base=self.base, title=title, posts=posts)
 
 	@cherrypy.expose
 	def default(self, *args):

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Kiel's Web Journal</title>
-		<link href="/css/style.css" rel="stylesheet" type="text/css" />
+		<link href="{{ base }}/static/css/style.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 		<div id="wrapper">
@@ -12,12 +12,12 @@
 				</div>
 				<div id="nav">
 					<ul>
-						<li><a href="/">Home</a></li>
-						<li><a href="/posts/">Archive</a></li>
+						<li><a href="{{ base }}/">Home</a></li>
+						<li><a href="{{ base }}/posts/">Archive</a></li>
 						<li><a href="mailto:kiel.lofstrand@gmail.com">Contact</a></li>
 					</ul>
 					<div id="search">
-						<form method="GET" action="/">
+						<form method="GET" action="{{ base }}/">
 							<input type="text" name="q" placeholder="Search" />
 						</form>
 					</div>
@@ -27,7 +27,7 @@
 			<div id="body">
 				<div class="left">
 					<div id="info">
-						<img src="/img/me.png" alt="me" />
+						<img src="{{ base }}/static/img/me.png" alt="me" />
 
 						<p class="section">About Me</p>
 						<p>Hi, my name's Kiel.  I'm a Dad!  I'm also a programmer.  In my spare time, I try to write my thoughts here.</p>
@@ -44,7 +44,7 @@
 				<div class="fixup"></div>
 			</div>
 			<div id="foot">
-				<h6>Copyright &copy; 2013 Kiel Lofstrand</h6>
+				<h6>Copyright &copy; 2016 Kiel Lofstrand</h6>
 			</div>
 		</div>
 	</body>

@@ -18,4 +18,13 @@ class Post:
 		if len(self.tags) == 0:
 			self.tags.append("uncategorized")
 
-
+	def _to_json(self):
+		return {
+			'id': self._id,
+			'title': self.title,
+			'author': self.author_id,
+			'posted': self.posted.isoformat(),
+			'body': self.body,
+			'slug': self.slug,
+			'tags': self.tags,
+		}

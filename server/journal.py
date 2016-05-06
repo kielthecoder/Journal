@@ -63,8 +63,20 @@ class APIv1:
 
 	@expose
 	@jsonify
-	def default(self, *args, **kwargs):
+	def default(self):
 		return { 'status': 'TODO' }
+
+	@expose
+	@jsonify
+	def echo(self, text="Hello!"):
+		return { 'text': text }
+
+	@expose
+	@jsonify
+	def posts(self):
+		posts = self.parent._get_posts('SELECT * FROM posts ORDER BY posted DESC')
+		resp = { 'posts': [p._to_json() for p in posts] }
+		return resp
 
 class API:
 	def __init__(self, parent):
@@ -77,7 +89,8 @@ class Journal:
 	env.filters['markdown'] = filter_markdown
 	env.filters['monthname'] = filter_monthname
 
-	def __init__(self):
+	def __init__(self, base):
+		self.base = base
 		self.posts = PostsView(self)
 		self.api = API(self)
 
@@ -97,7 +110,7 @@ class Journal:
 	def index(self):
 		posts = self._get_posts('SELECT * FROM posts ORDER BY posted DESC LIMIT 5')
 		t = self.env.get_template('index.html')
-		return t.render(title="Recent Posts",posts=posts)
+		return t.render(title="Recent Posts", base=self.base, posts=posts)
 
 	@expose
 	def post(self, slug_text):
@@ -106,7 +119,12 @@ class Journal:
 		p = Post(cur.fetchone(), self)
 		cur.close()
 		t = self.env.get_template('view_post.html')
-		return t.render(post=p)
+		return t.render(base=self.base, post=p)
 
 if __name__ == '__main__':
-	quickstart(Journal())
+	quickstart(Journal('/app1'), config={
+		'/static': {
+			'tools.staticdir.on': True,
+			'tools.staticdir.dir': '/home/kiel/journal/html/static',
+		}
+	})
