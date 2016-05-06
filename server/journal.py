@@ -68,9 +68,14 @@ class APIv1:
 
 	@expose
 	@jsonify
+	def echo(self, text="Hello!"):
+		return { 'text': text }
+
+	@expose
+	@jsonify
 	def posts(self):
 		posts = self.parent._get_posts('SELECT * FROM posts ORDER BY posted DESC')
-		resp = { 'items': [p._to_json() for p in posts] }
+		resp = { 'posts': [p._to_json() for p in posts] }
 		return resp
 
 class API:
