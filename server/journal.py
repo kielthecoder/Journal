@@ -63,8 +63,15 @@ class APIv1:
 
 	@expose
 	@jsonify
-	def default(self, *args, **kwargs):
+	def default(self):
 		return { 'status': 'TODO' }
+
+	@expose
+	@jsonify
+	def posts(self):
+		posts = self.parent._get_posts('SELECT * FROM posts ORDER BY posted DESC')
+		resp = { 'items': [p._to_json() for p in posts] }
+		return resp
 
 class API:
 	def __init__(self, parent):
