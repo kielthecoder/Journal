@@ -6,7 +6,7 @@ INITIAL SETUP
 
 Once you've cloned this repository, you'll need to setup a Python 3 environment for the server.  Typically, you can do something like:
 
-	virtualenv env
+	python3 -m venv env
 
 in your working directory to create the environment.  Activate the environment in your shell with:
 
