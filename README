@@ -26,6 +26,6 @@ RUNNING THE SERVER
 
 Start the server with:
 
-	python server/journal.py
+	python3 server/journal.py
 
 By default, your journal is now accessible from 127.0.0.1:8080.  If you've configured Nginx to proxy requests to the server, you can view your journal by accessing the root URL.
